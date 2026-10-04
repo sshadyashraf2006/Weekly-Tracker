@@ -8,7 +8,8 @@ import {
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
-  updateProfile
+  updateProfile,
+  sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
   doc, collection, getDoc, getDocs, setDoc, addDoc, deleteDoc,
@@ -219,11 +220,61 @@ function applyTheme(theme) {
 // ══════════════════════════════════════════════════════
 $('go-register')?.addEventListener('click', () => {
   $('login-form').classList.remove('active');
+  $('forgot-form')?.classList.remove('active');
   $('register-form').classList.add('active');
 });
 $('go-login')?.addEventListener('click', () => {
   $('register-form').classList.remove('active');
+  $('forgot-form')?.classList.remove('active');
   $('login-form').classList.add('active');
+});
+$('go-forgot')?.addEventListener('click', () => {
+  $('login-form').classList.remove('active');
+  $('register-form').classList.remove('active');
+  $('forgot-form')?.classList.add('active');
+  $('forgot-error')?.classList.add('hidden');
+  $('forgot-success')?.classList.add('hidden');
+  const loginEmail = $('login-email')?.value.trim();
+  if (loginEmail && $('forgot-email')) $('forgot-email').value = loginEmail;
+  $('forgot-email')?.focus();
+});
+$('go-login-from-forgot')?.addEventListener('click', () => {
+  $('forgot-form')?.classList.remove('active');
+  $('login-form').classList.add('active');
+});
+
+$('forgot-btn')?.addEventListener('click', async () => {
+  const email = $('forgot-email')?.value.trim();
+  const errEl = $('forgot-error');
+  const succEl = $('forgot-success');
+  errEl?.classList.add('hidden');
+  succEl?.classList.add('hidden');
+
+  if (!email) {
+    if (errEl) { errEl.textContent = 'Please enter your email address.'; errEl.classList.remove('hidden'); }
+    return;
+  }
+
+  const btn = $('forgot-btn');
+  btn.disabled = true;
+  btn.textContent = 'Sending link...';
+
+  try {
+    await sendPasswordResetEmail(auth, email);
+    if (succEl) {
+      succEl.textContent = 'Password reset email sent! Check your inbox (and spam folder).';
+      succEl.classList.remove('hidden');
+    }
+    showToast('Reset email sent!', '📧');
+  } catch(e) {
+    if (errEl) {
+      errEl.textContent = friendlyAuthError(e.code);
+      errEl.classList.remove('hidden');
+    }
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Send Reset Link';
+  }
 });
 
 $('login-btn')?.addEventListener('click', async () => {
@@ -278,8 +329,9 @@ function friendlyAuthError(code) {
     'auth/email-already-in-use': 'Email already registered.',
     'auth/invalid-email': 'Invalid email address.',
     'auth/weak-password': 'Password must be at least 6 characters.',
-    'auth/too-many-requests': 'Too many attempts. Please wait.',
+    'auth/too-many-requests': 'Too many attempts. Please wait a moment.',
     'auth/invalid-credential': 'Invalid email or password.',
+    'auth/missing-email': 'Please enter an email address.',
   };
   return map[code] || 'Something went wrong. Try again.';
 }

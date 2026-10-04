@@ -40,12 +40,31 @@
           <input type="email" id="login-email" placeholder="you@example.com" autocomplete="email" />
         </div>
         <div class="input-group">
-          <label for="login-password">Password</label>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <label for="login-password" style="margin-bottom:0">Password</label>
+            <span id="go-forgot" class="link" style="font-size:0.8rem">Forgot password?</span>
+          </div>
           <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" />
         </div>
         <div id="login-error" class="auth-error hidden"></div>
         <button id="login-btn" class="btn btn-primary btn-full">Login</button>
         <p class="auth-switch">No account? <span id="go-register" class="link">Create one</span></p>
+      </div>
+
+      <!-- Forgot Password Form -->
+      <div id="forgot-form" class="auth-form">
+        <h2 class="form-title">Reset Password</h2>
+        <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:16px;line-height:1.4;">
+          Enter your email and we'll send you a link to reset your password.
+        </p>
+        <div class="input-group">
+          <label for="forgot-email">Email</label>
+          <input type="email" id="forgot-email" placeholder="you@example.com" autocomplete="email" />
+        </div>
+        <div id="forgot-error" class="auth-error hidden"></div>
+        <div id="forgot-success" class="auth-success hidden" style="color:var(--neon-green);background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.3);padding:10px 14px;border-radius:var(--radius-sm);font-size:0.85rem;margin-bottom:14px;line-height:1.4;"></div>
+        <button id="forgot-btn" class="btn btn-primary btn-full">Send Reset Link</button>
+        <p class="auth-switch">Remember your password? <span id="go-login-from-forgot" class="link">Back to Login</span></p>
       </div>
 
       <!-- Register Form -->
